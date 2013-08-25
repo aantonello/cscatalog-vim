@@ -1,0 +1,281 @@
+*cscatalog.txt*           Colorscheme Categorizer                 Jan 2, 2013
+*cscatalog.vim*
+
+Author:     Alessandro Antonello                    <antonello.ale@gmail.com>
+
+                                                                  *cscatalog*
+License:    This script is in public domain. There is no obligations at all.
+            Also, no warranties, of any kind, are provided.
+
+==============================================================================
+1. Contents                                              *cscatalog-contents*
+
+        1. Contents.................................: |cscatalog-contents|
+        2. What this plugin does?...................: |cscatalog-whatis|
+        3. Archive..................................: |cscatalog-archive|
+        4. Installing...............................: |cscatalog-install|
+        5. Configuring..............................: |cscatalog-configure|
+        6. Commands.................................: |cscatalog-commands|
+            :CSAdd                                  : |cscatalog-add|
+            :CSRem                                  : |cscatalog-rem|
+            :CSDel                                  : |cscatalog-delete|
+            :CSList                                 : |cscatalog-list|
+            :CSCat                                  : |cscatalog-cat|
+            :CSRemoveScheme                         : |:CSRemoveScheme|
+        7. Category Files...........................: |cscatalog-categoreis|
+        8. ChangeLog................................: |cscatalog-changes|
+
+==============================================================================
+2. What this plugin does?                                  *cscatalog-whatis*
+
+        Vim has a lot of colorscheme files.  They cover almost every taste and
+        flavors of colors  for users that like  to use the GUI  version or the
+        terminal version.  Most of users choose one colorscheme and stick with
+        it in every work.  Others, like me, likes to change between a small or
+        large set,  accordingly with the time of the day or language that they
+        are currently working.  When  you have a large set  of colorschemes is
+        hard to remember which is better for one case or another.
+
+        This is what "cscatalog" does:  build a catalog where you can put your
+        colorschemes within categories of your choice.
+
+        The catalog is a directory in you machine.  You can put this directory
+        in  any place.  Often  this directory  is placed  inside the  user vim
+        runtime directory.  Usually this  is  "~/.vim"  on  Unix  or Unix like
+        systems  or  "\Users\%USERNAME%\vimfiles"  on  Windows  machines.  The
+        place    of    this   directory    is    defined    by    the   option
+        |'g:csc_StorageFolder'|.  Type ":h  cscatalog-configure"  to  see more
+        information about it.
+
+        Categories  are  files  inside  the  catalog  directory.   The  plugin
+        maintains these file through user commands.  For example: >
+
+        :CSAdd white-bg
+<
+        Will add the  current colorschema (the one in  'g:colors_name') in the
+        category "white-bg" inside the catalog directory. >
+
+        :CSList white-bg
+<
+        This command will list,  in the command window, all colorschemes added
+        to the "white-bg" category.
+
+        You can put  one colorscheme in more than  one category.  For a scheme
+        that doesn't have any bolds or italics font decoration, we can type: >
+
+        :CSAdd non-bolds non-italics
+<
+
+        After create your categories is easy to  find a scheme that has a dark
+        background, bold font style but not italics: >
+
+        :CSList dark-bg bolds non-italics
+<
+
+==============================================================================
+3. Archive                                                *cscatalog-archive*
+
+        If you download  it using the "Download ZIP" button  at github you may
+        just unzip the  file  any  where  in  you  machine  and copy the files
+        "doc/cscatalog.txt"  and  "plugin/cscatalog.vim"  to  you  Vim runtime
+        directory.  The "README.md" is not needed.
+
+==============================================================================
+4. Installing                                             *cscatalog-install*
+
+        The installation  process  is  very  simple.  Just  uncompress the ZIP
+        archive in your Vim personal directory.  This usually is "~./vim",  if
+        you are in an Mac  OSX or *Nix system.  Or "\Users\%USER%\vimfiles" in
+        the  main  drive  of  a  Windows  system.  You  should  use  the  full
+        uncompress process so the directories are kept.  >
+
+        unzip x cscatalog.zip
+<
+        This    command    will    uncompress    "plugin/cscatalog.vim"   and
+        "doc/cscatalog.txt" automatically.  After that you can delete the ZIP
+        archive safely.
+
+        To make the  documentation file work like any other  Vim help file you
+        will have to open Vim and type, in the command line: >
+
+        :helptags $RUNTIMEPATH/doc
+<
+        You  must replace  the |'$RUNTIMEPATH'| above  with  the  path  of your
+        personal Vim directory.
+
+==============================================================================
+5. Configuring                                          *cscatalog-configure*
+
+                                                       *'g:csc_StorageFolder'*
+        This plugin will  do nothing until you define  the directory that will
+        be used as category storage.  Is important to remember the you need to
+        have write permissions  on this directory.  The better way  is to keep
+        this directory inside your Vim personal folder.  The way to do this is
+        setting a global variable in your ".vimrc" file: >
+
+        let g:csc_StorageFolder = '~/.vim/cscatalog'
+<
+        The name  of the  directory doesn't matter.  Also  it doesn't  have to
+        exist.  The plugin will  create it if it doesn't.  It's  Ok to use the
+        tilde character in the path.  The plugin is smart enough to expand the
+        string and find  the  correct  path.  Is  also  OK  to use environment
+        variables.  So one could write this, on Windows: >
+
+        let g:csc_StorageFolder = 'c:/Users/$USER/vimfiles/cscatalog'
+<
+        You will need to restart Vim so the changes take effect.
+
+        If you don't want the plugin to be  loaded at all you just put this in
+        your ".vimrc" file: >
+
+        let g:loaded_cscatalog = 1
+<
+        And the plugin will not load.  Notice that there is no real benefit on
+        this  because the  plugin never  keeps data  on memory.  Every  time a
+        command is triggered the files  involved are read and calculations are
+        made.  Nothing is cached.  Setting the variable above does disable the
+        commands to be defined.
+
+==============================================================================
+6. Commands                                              *cscatalog-commands*
+
+        There are six commands available.  All commands are prefixed with "CS"
+        letters to  accomplish  Vim  rules.  Initially  commands were prefixed
+        with "CSCat", but that was too long.  So, I kept only "CS".
+
+        All commands  have completion.  Commands that  act in  categories list
+        the current  available categories.  Commands that  act on colorschemes
+        list the schemes available.  See the documentation of the command.
+
+                                                              *cscatalog-add*
+                                                                      *:CSAdd*
+:CSAdd {category}
+
+        Adds the  current colorscheme to a  category.  The argument {category}
+        is the category  name.  If  the  category  doesn't  exists  it will be
+        created.  Notice that this  plugin uses category names  as file names.
+        So the category  name  needs  to  be  a  valid  file name either.  The
+        completion list of this command is the list of current categories.  >
+
+        :CSAdd darkblue
+<
+        Adds the current colorscheme in the "darkblue" category.
+
+
+                                                           *cscatalog-remove*
+                                                                      *:CSRem*
+:CSRem {category}
+
+        Remove the  current colorscheme from the  category {category}.  If the
+        category doesn't  exists or  the scheme isn't  found on  that category
+        nothing is done.  The  completion list for this command  show the list
+        of available categories.  >
+
+        :CSRem darkblue
+<
+        Removes the current colorscheme from "darkblue" category.
+
+
+                                                           *cscatalog-delete*
+                                                                      *:CSDel*
+:CSDel {category}
+
+        Deletes the  category {category} from the  catalog.  Just the category
+        is  deleted.  No  colorscheme  is  touched.  The  completion  for this
+        command list all the available categories.  >
+
+        :CSDel darkblue
+<
+        Will delete the category "darkblue".
+
+
+                                                             *cscatalog-list*
+                                                                     *:CSList*
+:CSList {category} [{category2} [{category3}]]
+
+        This command will list all colorschemes that are common to the list of
+        passed  categories.   If   only  one  category  name   is  passed  all
+        colorschemes within  it will be  listed.  When two or  more categories
+        are passed the command will search for colorschemes that appear in all
+        categories,  listing only then.  The completion  for this command list
+        the available categories.  >
+
+        :CSList darkblue
+<       darkblue2    deepocean ~
+        >
+        :CSList darkblue nonbolds
+<       darkblue2 ~
+
+        This is great to find a colorscheme that fits your needs.
+
+
+                                                              *cscatalog-cat*
+                                                                      *:CSCat*
+:CSCat [{colorscheme}]
+
+        This command does the opposite  of the |:CSList| command.  It finds in
+        which   categories   the   colorscheme   {colorscheme}   is  in.   The
+        {colorscheme}  argument  is  optional.   If  not  passed  the  current
+        colorscheme is used.  The  completion for this command is  the list of
+        available colorschemes in your system.  >
+
+        :CSCat darkblue2
+<       darkblue    nonbolds ~
+
+
+                                                    *cscatalog-remove-scheme*
+                                                             *:CSRemoveScheme*
+:CSRemoveScheme {colorscheme}
+
+        This command removes a colorscheme from your system.  The command name
+        is long on purpose, to avoid erroneous usage, since it will delete the
+        colorscheme file.  A operation that  cannot be recovered.  The command
+        also ask for a confirmation before removing the file.  Consider to put
+        a colorscheme that you don't like in a special category, "dislike" for
+        example, instead of remove it.
+
+        This command may fail if you try to remove a standard colorscheme file
+        because it is located in the Vim installation directory.
+
+        The completion for this command list the available colorschemes.
+
+==============================================================================
+7. Category Files                                      *cscatalog-categories*
+
+        All  category  names  are converted  to  files  stored  in  the folder
+        specified  at  the  |'g:csc_StorageFolder'|  option.  These  files are
+        maintained by the plugin.  Besides the fact that they  are simple text
+        files  avoid  to change  then  manually.  The  plugin  is  very simple
+        because I  believe that simple  solutions are better.  But I know that
+        simple solutions require  some sort of good will, and most of then are
+        not error proof.  This  plugin is not error proof  so,  if you deleted
+        something that was not supposed to, I am really sorry in advance.
+
+        The  directory defined  in the  |'g:csc_StorageFolder'| is  called the
+        catalog.  This catalog is  just a bunch of files  named as categories.
+        When you ask for a command completion,  like the |:CSAdd| command, the
+        list shown is the files in this directory.
+
+        A category  file is  a text  file where each  line has  the name  of a
+        colorscheme contained in  that category.  The first line  of this file
+        is  kept  empty  for future  use.  Every  time  you  add  or  remove a
+        colorscheme from  this category the  plugin will overwrite  this file.
+        When you delete a category (using |:CSDel|),  the file is deleted from
+        this directory.
+
+        The plugin  uses the global  |'colors_name'| option to  find out which
+        colorscheme is in  use.  So,  if you have any  colorscheme plugin that
+        doesn't  set  this  option correctly  this  plugin  will  not  work as
+        expected.
+
+==============================================================================
+8. ChangeLog                                              *cscatalog-changes*
+
+        I am really lazy to keep this thing up to date. Sorry.
+
+        * 2013-01-03: First release.
+        * 2013-08-23: Releasing in the github repository.
+
+==============================================================================
+
+vim:tw=78:ts=4:sw=4:ft=help:
