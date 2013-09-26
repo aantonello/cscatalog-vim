@@ -59,22 +59,10 @@ fun s:AddToCategory(...)
         return
     endif
 
-    " Open the category file. It has all schemes pertaining to that category.
-    for cName in a:000
-        let l:categoryFile = s:OpenCatFile(cName)
-        if empty(l:categoryFile)
-            call add(l:categoryFile, '')        " First line reserved to a description.
-            call add(l:categoryFile, l:scheme)
-        else
-            " Only if the color scheme is not in that file.
-            if index(l:categoryFile, l:scheme) < 0
-                call add(l:categoryFile, l:scheme)
-            endif
-        endif
+    let l:argList = copy(a:000)
+    let l:argList = insert(l:argList, l:scheme)
 
-        " Write the category file.
-        call s:WriteCatFile(cName, l:categoryFile)
-    endfor
+    call call(s:AddColorToCategories, l:argList)
 
 endfun " >>>
 " s:RemoveFromCategory(cname, ...) <<<
@@ -93,9 +81,12 @@ fun s:RemoveFromCategory(cname, ...)
         return
     endif
 
-    let l:scheme = g:colors_name
     if a:0 > 0
         let l:scheme = a:1
+    elseif exists('g:colors_name')
+        let l:scheme = g:colors_name
+    else
+        return
     endif
 
     " Filter the list
@@ -252,6 +243,48 @@ fun s:FindScheme(...)
     endif
     return l:fileNames
 endfun " >>>
+" s:CathalogFunction(...) <<<
+" Central command for list, add or remove colorschemes from categories.
+" @param ... Many or nothing. When no parameter is passed the function will
+" output the list of categories for the current colorscheme. When only one
+" parameter is passed and no action is defined the function assumes that it is
+" a colorscheme name and list the categories it pertains. For one or more
+" arguments, the last argument must define what action to do. The current
+" supported actions are:
+" 'add:' Add the named colorscheme to the list of categories. Like ':CSAdd'.
+" 'rem:' Remove the named colorscheme to the list of categories. Like
+" ':CSRem'.
+" 'del:' Deletes the colorscheme. Like ':CSRemoveScheme'.
+" ============================================================================
+fun s:CathalogFunction(...)
+
+    if a:0 == 0
+        return s:ListCategoriesFor()
+    endif
+
+    " Search for the action
+    let l:addIndex = match(a:000, 'add:.*')
+    let l:remIndex = match(a:000, 'rem:.*')
+    let l:delIndex = match(a:000, 'del:.*')
+
+    if l:addIndex < 0 && l:remIndex < 0 && l:delIndex < 0
+        return call(s:ListCategoriesFor, a:000)
+    endif
+
+    " Make a copy of the list so we can change it.
+    let l:argList = copy(a:000)
+
+    " Exec the action asked
+    if l:addIndex >= 0
+        let l:colorScheme = strpart(remove(l:argList, l:addIndex), strlen("add:"))
+        call insert(l:argList, l:colorScheme)
+        call call(s:AddColorToCategories, l:argList)
+    elseif l:remIndex >= 0
+        let l:colorScheme = strpart(remove(l:argList, l:remIndex), strlen("rem:"))
+    else
+        let l:colorScheme = strpart(remove(l:argList, l:delIndex), strlen("del:"))
+    endif
+endfun " >>>
 
 "" Local Functions 
 " s:EchoMsg(type, msg) <<<
@@ -365,6 +398,28 @@ endfun " >>>
 fun s:WriteCatFile(cname, content)
     let l:filePath = s:storage_folder.'/'.a:cname
     call writefile(a:content, l:filePath)
+endfun " >>>
+" s:AddColorToCategories(a:color, ...) <<<
+" Add a colorscheme to a list of categories.
+" @param a:color Name of the color scheme to add.
+" @param ... Comma separated list of categories to add the colorscheme.
+" ============================================================================
+fun s:AddColorToCategories(a:color, ...)
+    for categoryName in a:000
+        let l:categoryFile = s:OpenCatFile(categoryName)
+        if empty(l:categoryFile)
+            call add(l:categoryFile, '')        " First line reserved to a description.
+            call add(l:categoryFile, a:color)
+        else
+            " Only if the color scheme is not in that file.
+            if index(l:categoryFile, a:color) < 0
+                call add(l:categoryFile, a:color)
+            endif
+        endif
+
+        " Write the category file.
+        call s:WriteCatFile(categoryName, l:categoryFile)
+    endfor
 endfun " >>>
 " s:GetCommonItems(list1, list2) <<<
 " Gets the itens that are common to both lists.
