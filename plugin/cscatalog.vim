@@ -316,6 +316,23 @@ fun s:CatalogList()
     " The result of globpath() is a list of new-line separated paths.
     return split(l:categoryNames, "\n")
 endfun " >>>
+" s:ColorsList() <<<
+" Returns the list os colorschemes.
+" ============================================================================
+fun s:ColorsList()
+    let l:colorsNames = globpath(&rtp, "colors/*.vim")
+    if strlen(l:colorsNames) == 0
+        return []
+    endif
+
+    " We break the result string into a list.
+    let l:colorsList = split(l:colorsNames, "\n")
+
+    " We can also remove the path information.
+    call map(l:colorsList, 'fnamemodify(v:val, ":t")')
+
+    return l:colorsList
+endfun " >>>
 " s:OpenCatFile(fName) <<<
 " Opens a file and returns it.
 " @returns A list with the file contents or an empty list.
