@@ -1,0 +1,4 @@
+2013-09-28  Alessandro <aantonello@paralaxe.com.br>
+
+	* CSCat: Command has been changed to a multi-purpose command. For now was
+	added 'add:', 'rem:' and 'del:' verbs.

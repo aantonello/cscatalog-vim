@@ -268,7 +268,7 @@ fun s:CathalogFunction(...)
     let l:delIndex = match(a:000, 'del:.*')
 
     if l:addIndex < 0 && l:remIndex < 0 && l:delIndex < 0
-        return call(s:ListCategoriesFor, a:000)
+        return call(function('s:ListCategoriesFor'), a:000)
     endif
 
     " Make a copy of the list so we can change it.
@@ -278,11 +278,14 @@ fun s:CathalogFunction(...)
     if l:addIndex >= 0
         let l:colorScheme = strpart(remove(l:argList, l:addIndex), strlen("add:"))
         call insert(l:argList, l:colorScheme)
-        call call(s:AddColorToCategories, l:argList)
+        call call(function('s:AddColorToCategories'), l:argList)
     elseif l:remIndex >= 0
         let l:colorScheme = strpart(remove(l:argList, l:remIndex), strlen("rem:"))
+        call insert(l:argList, l:colorScheme)
+        call call(function('s:RemoveColorFromCategories'), l:argList)
     else
         let l:colorScheme = strpart(remove(l:argList, l:delIndex), strlen("del:"))
+        call s:RemoveScheme(l:colorScheme)
     endif
 endfun " >>>
 
@@ -404,7 +407,7 @@ endfun " >>>
 " @param a:color Name of the color scheme to add.
 " @param ... Comma separated list of categories to add the colorscheme.
 " ============================================================================
-fun s:AddColorToCategories(a:color, ...)
+fun s:AddColorToCategories(color, ...)
     for categoryName in a:000
         let l:categoryFile = s:OpenCatFile(categoryName)
         if empty(l:categoryFile)
@@ -419,6 +422,22 @@ fun s:AddColorToCategories(a:color, ...)
 
         " Write the category file.
         call s:WriteCatFile(categoryName, l:categoryFile)
+    endfor
+endfun " >>>
+" s:RemoveColorFromCategories(a:color, ...) <<<
+" Removes a colorscheme from one or more categories.
+" @param a:color The color scheme name.
+" @param ... The list of categories to remove the colorscheme.
+" ============================================================================
+fun s:RemoveColorFromCategories(color, ...)
+    for categoryName in a:000
+        let l:categoryData = s:OpenCatFile(categoryName)
+        if !empty(l:categoryData)
+            "" Filter the list, removin the colorscheme from it.
+            call filter(l:categoryData, 'v:val !=? "'.a:color.'"')
+            "" Rewrite the file.
+            call s:WriteCatFile(categoryName, l:categoryData)
+        endif
     endfor
 endfun " >>>
 " s:GetCommonItems(list1, list2) <<<
@@ -447,7 +466,7 @@ command -nargs=+ -complete=customlist,s:ListCategories CSAdd :call s:AddToCatego
 command -nargs=1 -complete=customlist,s:ListCategories CSRem :call s:RemoveFromCategory(<f-args>)
 command -nargs=1 -complete=customlist,s:ListCategories CSDel :call s:RemoveCategory(<f-args>)
 command -nargs=+ -complete=customlist,s:ListCategories CSList :echo s:ListSchemes(<f-args>)
-command -nargs=? -complete=color CSCat :echo s:ListCategoriesFor(<f-args>)
+command -nargs=* -complete=color CSCat :echo s:CathalogFunction(<f-args>)
 command -nargs=? -complete=color CSFind :echo s:FindScheme(<f-args>)
 command -nargs=? -complete=color CSRemoveScheme :call s:RemoveScheme(<f-args>)
 
