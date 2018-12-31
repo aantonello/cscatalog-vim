@@ -76,9 +76,8 @@ License:    This script is in public domain. There is no obligations at all.
 3. Archive                                                *cscatalog-archive*
 
         If you download  it using the "Download ZIP" button  at github you may
-        just unzip the  file  any  where  in  you  machine  and copy the files
-        "doc/cscatalog.txt"  and  "plugin/cscatalog.vim"  to  you  Vim runtime
-        directory.  The "README.md" is not needed.
+        just unzip  the file any  where in you  machine and copy  the files to
+        your Vim runtime directory.
 
 ==============================================================================
 4. Installing                                             *cscatalog-install*
