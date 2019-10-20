@@ -55,12 +55,12 @@ fun cs#catalog#addScheme(...)
     call call(function('s:AddColorToCategories'), l:argList)
 
 endfun " >>>
-" cs#catalog#removeScheme(cname, ...) <<<
+" cs#catalog#removeSchemeFromCategory(cname, ...) <<<
 " Remove the current color scheme from a category.
 " @param cname The category name.
 " @returns Nothing.
 " ============================================================================
-fun cs#catalog#removeScheme(cname, ...)
+fun cs#catalog#removeSchemeFromCategory(cname, ...)
     let storePath = s:CheckConfig()
     if strlen(storePath) == 0
         return
@@ -375,8 +375,8 @@ endfun " >>>
 " @returns A list with the file contents or an empty list.
 " ============================================================================
 fun s:ReadCatFile(storePath, fName)
-    let l:fileNames = globpath(a:storePath, a:fName, 0, 1)
-    if len(l:fileNames) == 0
+    let l:fileList = globpath(a:storePath, a:fName, 0, 1)
+    if len(l:fileList) == 0
         return []
     endif
 

@@ -14,7 +14,7 @@ let g:loaded_cscatalog = 104
 
 "" Commands
 command -nargs=+ -complete=customlist,cs#catalog#listCategories CSAdd :call cs#catalog#addScheme(<f-args>)
-command -nargs=1 -complete=customlist,cs#catalog#listCategories CSRem :call cs#catalog#removeScheme(<f-args>)
+command -nargs=1 -complete=customlist,cs#catalog#listCategories CSRem :call cs#catalog#removeSchemeFromCategory(<f-args>)
 command -nargs=1 -complete=customlist,cs#catalog#listCategories CSDel :call cs#catalog#removeCategory(<f-args>)
 command -nargs=+ -complete=customlist,cs#catalog#listCategories CSList :echo cs#catalog#listSchemes(<f-args>)
 
