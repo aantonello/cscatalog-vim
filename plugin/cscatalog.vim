@@ -28,4 +28,11 @@ else
     command -nargs=? CSRemoveScheme :call cs#catalog#removeScheme(<f-args>)
 endif
 
-" vim:ff=unix:fdm=marker:fmr=<<<,>>>
+"" New commands:
+":Color                      -> show the current color name and its categories.
+":Color ls [category]        -> list all colors in one or all categories.
+":Color list                 -> list all colors in the runtime path.
+":Color add {category}       -> add the current colorscheme to on or more categories.
+":Color rm [category]        -> remove current colorscheme from one or more categories.
+":Color remove {colorscheme} -> remove a colorscheme from the catalog.
+":Color categories           -> list all categories.
